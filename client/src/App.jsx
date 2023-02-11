@@ -5,7 +5,7 @@ import ItemList from './components/ItemList';
 import Results from './components/Results';
 import { useQuery, gql } from '@apollo/client';
 
-const GET_ALL_TASKS = gql`
+export const GET_ALL_TASKS = gql`
   query GetAllTasks {
     tasks {
       id
