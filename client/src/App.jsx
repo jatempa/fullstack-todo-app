@@ -30,8 +30,8 @@ function App() {
     setTask(event.target.value);
   };
 
-  const updateStatus = (i) => {
-    const index = tasks.findIndex((task) => task.id === i.id);
+  const updateStatus = (selectedTask) => {
+    const index = tasks.findIndex((task) => task.id === selectedTask.id);
     tasks[index] = {
       ...tasks[index],
       done: !tasks[index].done,
@@ -48,8 +48,12 @@ function App() {
         addTask={addTask}
         handleChange={handleChange}
       />
-      <ItemList items={tasks} updateStatus={updateStatus} />
-      {tasks.length > 0 ? <Results results={results} /> : null}
+      {tasks.length > 0 ? (
+        <>
+          <ItemList items={tasks} updateStatus={updateStatus} />
+          <Results results={results} />
+        </>
+      ) : null}
     </Card>
   );
 }
