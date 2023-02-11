@@ -1,7 +1,9 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import gql from 'graphql-tag';
-import { v4 as uuidv4 } from 'uuid';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 const typeDefs = gql`
   type Task {
@@ -20,69 +22,44 @@ const typeDefs = gql`
   }
 `;
 
-const tasks = [
-  {
-    id: 'ef7b0734-911b-46bd-86f9-11cfe3610ced',
-    title: 'libero tenetur blanditiis',
-    done: false,
-  },
-  {
-    id: '06b66e47-c5ca-42c4-a3dc-18f8c8210f69',
-    title: 'ratione quo quaerat',
-    done: false,
-  },
-  {
-    id: 'e52d8c54-31a8-455e-8871-b2364f73d6c1',
-    title: 'aut eum molestias',
-    done: false,
-  },
-  {
-    id: 'c14d162a-cb6e-49d9-b4ba-d1135211dcfe',
-    title: 'autem repellat omnis',
-    done: false,
-  },
-  {
-    id: '61487c4e-990c-4b8b-bef8-87f5ca9c2bcf',
-    title: 'ut voluptatem voluptatum',
-    done: false,
-  },
-  {
-    id: 'd56192e3-57d2-432e-8f65-7c517b91f466',
-    title: 'velit quod maiores',
-    done: false,
-  },
-  {
-    id: 'd7fd0104-89bd-4746-8457-3ab9068e2f9a',
-    title: 'et dolorem necessitatibus',
-    done: false,
-  },
-];
+interface TaskInput {
+  title: string;
+}
+interface TaskUpdateInput {
+  id: string;
+}
 
 const resolvers = {
   Query: {
-    tasks: () => tasks,
+    tasks: async () => await prisma.task.findMany(),
   },
   Mutation: {
-    addTask: (_, { title }) => {
-      if (!title || title.length === 0) return;
+    addTask: async (_parent: any, args: TaskInput) => {
+      const task = await prisma.task.create({
+        data: {
+          title: args.title,
+        },
+      });
 
-      const newTask = {
-        id: uuidv4(),
-        title,
-        done: false,
-      };
-
-      tasks.push(newTask);
-
-      return newTask;
+      return task;
     },
-    updateTask: (_, { id }) => {
-      const index = tasks.findIndex((task) => task.id === id);
-      tasks[index] = {
-        ...tasks[index],
-        done: !tasks[index].done,
-      };
-      return tasks[index];
+    updateTask: async (_parent: any, args: TaskUpdateInput) => {
+      const task = await prisma.task.findFirst({
+        where: {
+          id: args.id,
+        },
+      });
+
+      const updatedTask = await prisma.task.update({
+        where: {
+          id: task.id,
+        },
+        data: {
+          done: !task.done,
+        },
+      });
+
+      return updatedTask;
     },
   },
 };
