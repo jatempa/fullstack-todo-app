@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import Item from './Item';
 import Mark from './Mark';
+import { useMutation, gql } from '@apollo/client';
 
 const ItemContainer = styled.ul`
   padding: 0px;
@@ -15,16 +16,29 @@ const ItemContainer = styled.ul`
   }
 `;
 
-const ItemList = (props) => {
-  const { items, updateStatus } = props;
+const UPDATE_TASK = gql`
+  mutation UpdateTask($id: ID!) {
+    updateTask(id: $id) {
+      id
+      title
+      done
+    }
+  }
+`;
+
+const ItemList = ({ tasks }) => {
+  const [updateTask] = useMutation(UPDATE_TASK);
+
+  const updateStatus = (selectedTask) =>
+    updateTask({ variables: { id: selectedTask.id } });
 
   return (
     <ItemContainer>
-      {items.map((item) => {
+      {tasks.map((task) => {
         return (
-          <li key={item.id}>
-            <Item item={item} />
-            <Mark item={item} updateStatus={updateStatus} />
+          <li key={task.id}>
+            <Item item={task} />
+            <Mark item={task} updateStatus={updateStatus} />
           </li>
         );
       })}

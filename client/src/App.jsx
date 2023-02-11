@@ -22,23 +22,13 @@ function App() {
 
   if (error) return <p>Error : {error.message}</p>;
 
-  const updateStatus = (selectedTask) => {
-    const index = tasks.findIndex((task) => task.id === selectedTask.id);
-    tasks[index] = {
-      ...tasks[index],
-      done: !tasks[index].done,
-    };
-
-    setTasks([...tasks]);
-  };
-
   return (
     <Card id='app' className='card'>
       <Header>To Do</Header>
       <CustomTaskInput />
       {data.tasks.length > 0 ? (
         <>
-          <ItemList items={data.tasks} updateStatus={updateStatus} />
+          <ItemList tasks={data.tasks} />
           <hr />
           <Results tasks={data.tasks} />
         </>
