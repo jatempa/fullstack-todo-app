@@ -64,6 +64,7 @@ function App() {
       {data.tasks.length > 0 ? (
         <>
           <ItemList items={data.tasks} updateStatus={updateStatus} />
+          <hr />
           <Results tasks={data.tasks} />
         </>
       ) : null}

@@ -5,24 +5,23 @@ const ResultsContainer = styled.div`
   justify-content: space-between;
 `;
 
-const Results = (props) => {
-  const { results } = props;
+const Results = ({ tasks }) => {
+  const all = tasks.length;
+  const complete = tasks.filter((task) => task.done).length;
+  const incomplete = all - complete;
 
   return (
-    <>
-      <hr />
-      <ResultsContainer>
-        <span>
-          <strong>Total:</strong> {results.all}
-        </span>
-        <span>
-          <strong>Complete:</strong> {results.complete}
-        </span>
-        <span>
-          <strong>Incomplete:</strong> {results.incomplete}
-        </span>
-      </ResultsContainer>
-    </>
+    <ResultsContainer>
+      <span>
+        <strong>Total:</strong> {all}
+      </span>
+      <span>
+        <strong>Complete:</strong> {complete}
+      </span>
+      <span>
+        <strong>Incomplete:</strong> {incomplete}
+      </span>
+    </ResultsContainer>
   );
 };
 
