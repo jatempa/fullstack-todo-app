@@ -1,0 +1,7 @@
+span {
+  overflow-wrap: break-word;
+}
+
+span.done {
+  text-decoration-line: line-through;
+}
