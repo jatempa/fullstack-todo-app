@@ -1,15 +1,29 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useState } from 'react';
-import { useTasks } from './hooks/useTasks';
 import Card from './components/Card';
 import CustomTaskInput from './components/CustomTaskInput';
 import Header from './components/Header';
 import ItemList from './components/ItemList';
 import Results from './components/Results';
+import { useQuery, gql } from '@apollo/client';
+
+const GET_ALL_TASKS = gql`
+  query GetAllTasks {
+    tasks {
+      id
+      title
+      done
+    }
+  }
+`;
 
 function App() {
-  const { tasks, setTasks, results } = useTasks();
   const [task, setTask] = useState('');
+  const { loading, error, data } = useQuery(GET_ALL_TASKS);
+
+  if (loading) return <p>Loading...</p>;
+
+  if (error) return <p>Error : {error.message}</p>;
 
   const addTask = (event) => {
     if (event.key === 'Enter') {
@@ -21,7 +35,6 @@ function App() {
         done: false,
       };
 
-      setTasks([...tasks, newTask]);
       setTask('');
     }
   };
@@ -48,10 +61,10 @@ function App() {
         addTask={addTask}
         handleChange={handleChange}
       />
-      {tasks.length > 0 ? (
+      {data.tasks.length > 0 ? (
         <>
-          <ItemList items={tasks} updateStatus={updateStatus} />
-          <Results results={results} />
+          <ItemList items={data.tasks} updateStatus={updateStatus} />
+          <Results tasks={data.tasks} />
         </>
       ) : null}
     </Card>
