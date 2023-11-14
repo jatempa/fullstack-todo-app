@@ -1,5 +1,5 @@
 # fullstack-todo-app
 
-### Client is implements with ReactJS.
+### Client is implemented with ReactJS.
 
 ![](./img/result.gif)
